@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mammoth Visual — Монументальный PvP Клиент & Лаунчер Minecraft</title>
+    <style>
+        /* Базовые стили и Сброс */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --bg-color: #0c0c0e;
+            --card-bg: #141417;
+            --accent-color: #9333ea;
+            --accent-glow: #a855f7;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --success: #10b981;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Навигационная панель */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 10%;
+            background: rgba(12, 12, 14, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 1px solid #27272a;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: var(--accent-glow);
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--text-main);
+        }
+
+        .btn-download-nav {
+            background: var(--accent-color);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-download-nav:hover {
+            background: var(--accent-glow);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Главный экран (Hero Section) */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 10%;
+            background: radial-gradient(circle at center, rgba(147, 51, 234, 0.12) 0%, transparent 60%);
+            margin-top: 60px;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(to right, #c084fc, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 650px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn-main {
+            padding: 14px 40px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: white;
+            box-shadow: 0 4px 20px rgba(147, 51, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-glow);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(168, 85, 247, 0.5);
+        }
+
+        .btn-secondary {
+            background: #27272a;
+            color: var(--text-main);
+            border: 1px solid #3f3f46;
+        }
+
+        .btn-secondary:hover {
+            background: #3f3f46;
+            transform: translateY(-2px);
+        }
+
+        /* Блок функционала по категориям (ClickGUI Стилизация) */
+        .features-section {
+            padding: 100px 10%;
+            background-color: #09090b;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 60px;
+            font-size: 16px;
+        }
+
+        .gui-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* Имитация окон ClickGUI нашего софта */
+        .gui-window {
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #27272a;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .gui-header {
+            background: var(--accent-color);
+            padding: 12px 20px;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .gui-header-icon {
+            opacity: 0.8;
+        }
+
+        .gui-body {
+            padding: 15px;
+        }
+
+        .cheat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #1c1c21;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border-left: 3px solid #3f3f46;
+            transition: all 0.2s;
+        }
+
+        .cheat-item.active {
+            border-left-color: var(--accent-glow);
+        }
+
+        .cheat-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .cheat-info p {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Кастомный чекбокс тумблер */
+        .toggle-switch {
+            width: 34px;
+            height: 18px;
+            background: #3f3f46;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: white;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+
+        .cheat-item.active .toggle-switch {
+            background: var(--accent-color);
+        }
+
+        .cheat-item.active .toggle-switch::before {
+            transform: translateX(16px);
+        }
+
+        /* Подвал сайта */
+        footer {
+            padding: 40px 10%;
+            background: #060608;
+            border-top: 1px solid #18181b;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        footer p span {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        /* Мобильная адаптивность */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 38px; }
+            header nav { display: none; }
+            .hero-buttons { flex-direction: column; width: 100%; max-width: 300px; }
+            .btn-main { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка Сайта -->
+    <header>
+        <div class="logo">Mammoth <span>Visual</span></div>
+        <nav>
+            <a href="#features">Функционал</a>
+            <a href="#gui">Интерфейс</a>
+            <a href="#download" class="btn-download-nav">Скачать</a>
+        </nav>
+    </header>
+
+    <!-- Главный баннер (Hero) -->
+    <section class="hero" id="hero">
+        <h1>Лаунчер нового поколения<br><span>Mammoth Visual</span></h1>
+        <p>Монументальный чит-клиент со встроенным автономным лаунчером, входным Хабом валидации и паком из 28 PvP-модулей и Pulse-визуалов. Полная поддержка версий 1.20.1 и 1.21.1 в одном файле.</p>
+        <div class="hero-buttons">
+            <a href="#download" class="btn-main btn-primary">Скачать Mammoth.jar</a>
+            <a href="#features" class="btn-main btn-secondary">Обзор функций</a>
+        </div>
+    </section>
+
+    <!-- Блок Функций / Имитация ClickGUI на Right Shift -->
+    <section class="features-section" id="features">
+        <h2 class="section-title">Внутриигровой интерфейс</h2>
+        <p class="section-subtitle">Нажмите <strong>RSHIFT (Правый Shift)</strong> прямо во время матча, чтобы открыть меню управления категориями</p>
+
+        <div class="gui-container" id="gui">
+            
+            <!-- Категория 1: ЧИТЫ -->
+            <div class="gui-window">
+                <div class="gui-header">
+                    <span>⚔️ ЧИТЫ (Combat & Automation)</span>
+                    <span class="gui-header-icon">⚙️</span>
+                </div>
+                <div class="gui-body">
+                    <div class="cheat-item active">
+                        <div class="cheat-info">
+                            <h4>KillAura</h4>
+                            <p>Удары на 3.8б с фильтрацией (Криты, Мобы, Игроки)</p>
+                        </div>
+                        <div class="toggle-switch"></div>
+                    </div>
+                    <div class="cheat-item active">
+                        <div class="cheat-info">
